@@ -1,0 +1,53 @@
+      - name: Deploy new ioiconf.sh
+        copy:
+                src: files/ioiconf.sh
+                dest: /opt/ioi/bin/ioiconf.sh
+                owner: ansible
+                group: ansible
+                mode: '0755'
+        tags:
+          - init
+          - reprovision
+
+      - name: Deploy new ioibackup.sh
+        copy:
+                src: files/ioibackup.sh
+                dest: /opt/ioi/bin/ioibackup.sh
+                owner: ansible
+                group: ansible
+                mode: '0755'
+        tags:
+          - init
+          - reprovision
+
+      - name: Deploy new genkeys.sh
+        copy:
+                src: files/genkeys.sh
+                dest: /opt/ioi/sbin/genkeys.sh
+                owner: root
+                group: root
+                mode: '0700'
+        tags:
+          - init
+          - reprovision
+
+      - name: Apply iptables
+        command: /opt/ioi/sbin/firewall.sh start
+        become: yes
+        tags:
+          - init
+          - reprovision
+
+      - name: Reset Contest State
+        file:
+          path: "{{ item }}"
+          state: absent
+        with_items:
+          - /opt/ioi/run/lockscreen
+          - /opt/ioi/run/lockdown
+          - /opt/ioi/run/contestid.txt
+          - /opt/ioi/run/userid.txt
+          - /
+          opt/ioi/cron.d/contest
+        tags:
+          - init

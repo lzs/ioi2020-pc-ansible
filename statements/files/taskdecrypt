@@ -1,0 +1,15 @@
+#!/bin/sh
+
+WORKDIR=$(mktemp -d)
+if [ -n "$1" ]; then
+  gpg --pinentry-mode=loopback --passphrase "$1" -o $WORKDIR/tasks.tar.bz2 /opt/ioi/config/tasks.tar.bz2.gpg
+else
+  gpg -o $WORKDIR/tasks.tar.bz2 /opt/ioi/config/tasks.tar.bz2.gpg
+fi
+
+if [ -f "$WORKDIR/tasks.tar.bz2" ]; then
+	tar jxf "$WORKDIR/tasks.tar.bz2" -C ~ioi/Documents/
+fi
+
+rm -f $WORKDIR/tasks.tar.bz2
+rmdir $WORKDIR

@@ -1,0 +1,18 @@
+- hosts: all
+  strategy: free
+  tasks:
+  
+  - name: Test
+    command: sudo sha256sum /bin/bash
+    register: hello
+    async: 45
+    poll: 10
+
+  - name: Test Output
+    local_action: copy content="{{ hello.stdout }}\n" dest="output/checkfiles/{{ inventory_hostname }}"
+
+  - name: Log Output
+    local_action:
+      module: lineinfile
+      dest: "~/logs/version.log"
+      line: "{{ inventory_hostname }} has files {{ hello.stdout }}"

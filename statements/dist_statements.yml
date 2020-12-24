@@ -1,0 +1,46 @@
+- name: Distribute task statement archive to contestants
+  hosts: all
+  become: yes
+  become_method: sudo
+  gather_facts: no
+  strategy: free
+  vars:
+    - file: "/home/htc/day2-seed/tasks.tar.bz2.gpg"
+  tasks:
+    - name: Deploy taskdecrypt
+      copy:
+        src: files/taskdecrypt
+        dest: /opt/ioi/bin/taskdecrypt
+        owner: ansible
+        group: ansible
+        mode: '0755'
+    - name: Rsync tasks
+      synchronize:
+        mode: push
+        src: "{{ file }}"
+        dest: "/opt/ioi/config/{{ file | basename }}"
+        checksum: yes
+      ignore_unreachable: yes
+      become: yes
+    - name: Set task file permissions
+      file:
+        path: "/opt/ioi/config/{{ file | basename }}"
+        owner: ioi
+        group: ioi
+        mode: "0644"
+    # - copy:
+    #     src: "{{ file }}"
+    #     dest: /opt/ioi/config/
+    #     owner: ioi
+    #     group: ioi
+    #     mode: "0644"
+    #   when: task_file.stat.exists == false
+
+# save as tasks.tar.bz2
+# tar -cjvf tasks.tar.bz2 practice
+# gpg -c tasks.tar.bz2
+# Run ansible-playbook with -e "file=tasks.tar.bz2.gpg"
+
+# Password: XXX
+
+## Decrypt ansible  -m shell -a "sudo -u ioi -- /opt/ioi/bin/taskdecrypt IOI2020ContestDay2" all

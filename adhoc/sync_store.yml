@@ -1,0 +1,32 @@
+- name: Sync the /opt/ioi/store/ folder to this host
+  hosts: all
+  strategy: free
+  tasks:
+    - name: Pull IOI store
+      synchronize:
+        mode: pull
+        src: "/opt/ioi/store/"
+        dest: "./ioistore/{{ inventory_hostname }}/"
+        delete: yes
+        recursive: yes
+      ignore_unreachable: yes
+      become: yes
+    - name: Pull syslog history
+      synchronize:
+        mode: pull
+        src: "/var/log/syslog"
+        dest: "./ioisyslog/{{ inventory_hostname }}/"
+        delete: yes
+        recursive: yes
+      ignore_unreachable: yes
+      become: yes
+    - name: Pull Firefox history
+      synchronize:
+        mode: pull
+        src: "/home/ioi/.mozilla/firefox/dqb69w9m.default-release/places.sqlite"
+        dest: "./firefoxlog/{{ inventory_hostname }}/"
+        delete: yes
+        recursive: yes
+      ignore_unreachable: yes
+      ignore_errors: yes
+      become: yes

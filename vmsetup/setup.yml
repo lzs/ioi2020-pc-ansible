@@ -1,0 +1,16 @@
+- hosts: all
+  strategy: free
+  become: yes
+  tasks:
+  
+  - name: Updates
+    import_tasks: updates.yml
+
+  - name: Init Zabbix
+    import_tasks: zabbix-agent.yml
+
+  - name: Contest Tasks
+    import_tasks: contest.yml
+
+  handlers:
+    - import_tasks: handlers.yml

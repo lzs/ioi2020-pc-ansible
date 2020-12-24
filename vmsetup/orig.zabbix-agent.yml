@@ -1,0 +1,58 @@
+- name: Installing Zabbix Agent
+  hosts: all, !zabbix_server
+  become: yes
+
+  tasks:
+
+    - name: Install Zabbix Repo on Ubuntu
+      apt:
+        deb: https://repo.zabbix.com/zabbix/5.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.0-1+focal_all.deb
+        update_cache: yes
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Update Apt Cache
+      apt:
+        update_cache: yes
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Install Zabbix Repo on CentOS
+      yum:
+        name: https://repo.zabbix.com/zabbix/4.4/rhel/7/x86_64/zabbix-release-4.4-1.el7.noarch.rpm
+        state: present
+      when: ansible_distribution == 'CentOS'
+
+    - name: Install Zabbix Agent
+      package:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - zabbix-agent
+
+    # PSK is shared with Zabbix server for agent autoregistration
+    - name: Copy PSK
+      copy:
+        content: "1111111111111111111111111111111111111111111111111111111111111111\n"
+        dest: /etc/zabbix/psk-autoregistration.txt
+        mode: 0600
+        owner: zabbix
+        group: zabbix
+
+    - name: Copy Zabbix Agent Configuration
+      template:
+        src: zabbix_agentd.j2
+        dest: /etc/zabbix/zabbix_agentd.conf
+      notify:
+        restart zabbix-agent
+
+    - name: Enable Zabbix Agent
+      systemd:
+        name: zabbix-agent
+        enabled: yes
+        state: started
+
+  handlers:
+    - name: restart zabbix-agent
+      service:
+        name: zabbix-agent
+        state: restarted
+

@@ -1,0 +1,23 @@
+- name: Decrypt task statement archive
+  hosts: all
+  become: yes
+  become_method: sudo
+  gather_facts: no
+  strategy: free
+  tasks:
+    - name: Decrypt using task decrypt
+      shell: "sudo -u ioi -- /opt/ioi/bin/taskdecrypt IOI2020ContestDay2"
+      become: yes
+
+
+# save as tasks.tar.bz2
+# tar -cjvf tasks.tar.bz2 practice
+# gpg -c tasks.tar.bz2
+# Run ansible-playbook with -e "file=tasks.tar.bz2.gpg"
+
+# Password: XXX
+
+## Decrypt ansible -l g1 -m shell -a "sudo -u ioi -- /opt/ioi/bin/taskdecrypt abc123" all
+
+
+# Password: XXX

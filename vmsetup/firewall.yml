@@ -1,0 +1,17 @@
+#- hosts: all
+#  strategy: free
+#  tasks:
+#          # Rule update for Zabbix to work
+#          - name: Copy iptables configuration
+#            copy:
+#                    src: files/iptables.save
+#                    dest: /opt/ioi/misc/iptables.save
+#                    owner: ansible
+#                    group: ansible
+#                    mode: '0644'
+#            register: cp_iptables
+#
+#          - name: Apply iptables
+#            command: /opt/ioi/sbin/firewall.sh start
+#            become: yes
+#            when: cp_iptables.changed

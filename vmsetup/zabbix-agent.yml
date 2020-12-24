@@ -1,0 +1,30 @@
+    # PSK is shared with Zabbix server for agent autoregistration
+    - name: Copy PSK
+      copy:
+        content: "1111111111111111111111111111111111111111111111111111111111111111\n"
+        dest: /etc/zabbix/psk-autoregistration.txt
+        mode: 0600
+        owner: zabbix
+        group: zabbix
+      tags:
+        - init
+        - reprovision
+
+    - name: Copy Zabbix Agent Configuration
+      template:
+        src: files/zabbix_agentd.j2
+        dest: /etc/zabbix/zabbix_agentd_ioi.conf
+      notify:
+        restart zabbix-agent
+      tags:
+        - init
+        - reprovision
+
+    - name: Enable Zabbix Agent
+      systemd:
+        name: zabbix-agent
+        enabled: yes
+        state: started
+      tags:
+        - init
+        - reprovision

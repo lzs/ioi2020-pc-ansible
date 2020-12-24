@@ -1,0 +1,19 @@
+- hosts: all
+  strategy: free
+  tasks:
+          - name: Deploy taskdecrypt
+            copy:
+                    src: files/taskdecrypt
+                    dest: /opt/ioi/bin/taskdecrypt
+                    owner: ansible
+                    group: ansible
+                    mode: '0755'
+          - name: Copy task package
+            copy:
+                    src: files/tasks.tar.bz2.gpg
+                    dest: /home/ioi/Downloads/tasks.tar.bz2.gpg
+                    owner: ioi
+                    group: ioi
+                    mode: '0644'
+
+            

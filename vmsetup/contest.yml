@@ -1,0 +1,45 @@
+    - name: Contest Prep
+      command: /opt/ioi/sbin/contest.sh prep 0
+      become: yes
+      tags:
+        - contestprep
+        - reprovision
+
+    - name: Contest Start
+      command: /opt/ioi/sbin/contest.sh start 0
+      become: yes
+      tags:
+        - conteststart
+        - reprovision
+
+    - name: Contest Stop
+      command: /opt/ioi/sbin/contest.sh stop 0
+      become: yes
+      tags:
+        - asdasd
+    
+    - name: Contest Done, remove files
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /opt/ioi/run/lockscreen
+        - /opt/ioi/run/lockdown
+        - /opt/ioi/run/contestid.txt
+        - /opt/ioi/run/userid.txt
+        - /opt/ioi/cron.d/contest
+      tags:
+        - contestdone
+
+    - name: Contest Done, stop firewall
+      command: /opt/ioi/sbin/firewall.sh stop
+      become: yes
+      tags:
+        - contestdone
+
+    - name: Contest Done, Stop i3lock
+      service:
+        name: i3lock
+        state: stopped
+      tags:
+        - contestdone

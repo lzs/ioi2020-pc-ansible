@@ -1,0 +1,18 @@
+- hosts: all
+  strategy: free
+  tasks:
+  
+  - name: Test
+    command: cat /opt/ioi/misc/VERSION
+    register: hello
+    async: 45
+    poll: 10
+
+  - name: Test Output
+    local_action: copy content="{{ hello.stdout }}\n" dest="output/version/{{ inventory_hostname }}"
+
+  - name: Log Output
+    local_action:
+      module: lineinfile
+      dest: "~/logs/version.log"
+      line: "{{ inventory_hostname }} has version {{ hello.stdout }}"

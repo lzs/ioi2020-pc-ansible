@@ -1,0 +1,18 @@
+- hosts: all
+  strategy: free
+  tasks:
+  
+  - name: Get checkum
+    command: sudo /opt/ioi/sbin/genkeys.sh
+    register: hello
+    async: 45
+    poll: 10
+
+  - name: Write Node Status
+    local_action: copy content="{{ hello.stdout }}\n" dest="output/genkey/{{ inventory_hostname }}"
+
+  - name: Append to Log
+    local_action:
+      module: lineinfile
+      dest: "~/logs/version.log"
+      line: "{{ inventory_hostname }} has version {{ hello.stdout }}"

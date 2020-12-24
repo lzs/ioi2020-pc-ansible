@@ -1,0 +1,13 @@
+# Configufation
+PidFile=/var/run/zabbix/zabbix_agentd.pid
+LogFile=/var/log/zabbix/zabbix_agentd.log
+LogFileSize=0
+Server=172.31.2.194
+ServerActive=172.31.2.194
+Hostname={{ inventory_hostname }}
+TLSConnect=psk
+TLSAccept=psk
+TLSPSKIdentity=contestantvm
+TLSPSKFile=/etc/zabbix/psk-autoregistration.txt
+UserParameter=agent.ioiversion,cat /opt/ioi/misc/VERSION
+UserParameter=agent.vminstance,cat /opt/ioi/run/instanceid.txt

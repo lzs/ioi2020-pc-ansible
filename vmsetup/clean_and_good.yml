@@ -1,0 +1,16 @@
+- hosts: all
+  strategy: free
+  tasks:
+  
+  - name: Test
+    command: cat /opt/ioi/misc/VERSION
+    register: hello
+    async: 45
+    poll: 10
+
+  - name: Clean directory
+    command: 
+
+  - name: Test Output
+    local_action: copy content="{{ hello.stdout }}\n" dest="output/{{ inventory_hostname }}"
+
